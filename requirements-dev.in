@@ -1,0 +1,8 @@
+ruff
+ipykernel
+tqdm
+matplotlib
+lovelyplots
+seaborn
+e3nn
+e3tools
