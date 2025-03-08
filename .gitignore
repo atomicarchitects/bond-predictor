@@ -6,4 +6,7 @@
 *.txt
 *.log
 *.smi
-**/*.pyc
+__pycache__/
+*.py[cod]
+*.xyz
+*.sdf

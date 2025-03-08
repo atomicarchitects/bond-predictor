@@ -21,7 +21,7 @@ class E3Conv(nn.Module):
         num_atom_types: int = 100,
         max_charge: int = 6,
         edge_attr_dim: int = 8,
-        radial_cutoff: float = 5.0, # Angstrom
+        radial_cutoff: float = 5.0,  # Angstrom
     ):
         super().__init__()
 
@@ -82,7 +82,6 @@ class E3Conv(nn.Module):
         atom_types: torch.Tensor,
         edge_index: torch.Tensor,
     ) -> torch.Tensor:
-
         if edge_index is None:
             edge_index = e3tools.radius_graph(coordinates, r=self.radial_cutoff)
         edge_vec = coordinates[edge_index[1]] - coordinates[edge_index[0]]
@@ -109,13 +108,13 @@ class E3Conv(nn.Module):
         # Compute node features.
         node_attr = node_attr.detach()
         node_attr_final = self.node_output(node_attr)
-    
+
         return edge_attr_final, node_attr_final
 
         # # Map edge features to bond logits.
         # N = coordinates.shape[0]
         # bond_logits = torch.zeros((N, N, edge_attr_final.shape[-1]), dtype=edge_attr_final.dtype, device=edge_attr_final.device)
-        
+
         # # For the non-edges, set the bond type to "no bond".
         # bond_logits[:, :, 0] = 1e6  # No bond
         # bond_logits[edge_index[0], edge_index[1]] = edge_attr_final

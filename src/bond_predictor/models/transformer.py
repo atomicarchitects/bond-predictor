@@ -59,7 +59,7 @@ class Transformer(nn.Module):
         """
         if coordinates.dim() != 3:
             coordinates = coordinates[None, ...]
-        
+
         if atom_types.dim() != 2:
             atom_types = atom_types[None, ...]
 

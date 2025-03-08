@@ -13,7 +13,7 @@ readme = {file = "README.md"}
 dev = {file = ["requirements-dev.in"]}
 
 [project.scripts]
-predict_bonds = "bond_predictor.predict:main"
+predict-bonds = "bond_predictor.predict:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
