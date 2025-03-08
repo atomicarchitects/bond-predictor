@@ -56,11 +56,6 @@ ignore = [
     "F401", # MODULE IMPORTED BUT UNUSED
 ]
 
-[tool.uv]
-no-build-package = ["mdtraj"]
-cache-keys = [{file = "requirements.in"}, {file = "requirements-dev.in"}]
-constraint-dependencies = ["torch==2.5.1"]
-
 # see https://github.com/astral-sh/uv/issues/9079
 [tool.uv.sources]
 torch_scatter = [

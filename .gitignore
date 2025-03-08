@@ -1,3 +1,9 @@
 .venv
 .ruff_cache
 *.egg-info
+*.pt
+*.pdb
+*.txt
+*.log
+*.smi
+**/*.pyc

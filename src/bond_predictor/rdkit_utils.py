@@ -17,6 +17,49 @@ def get_atom_features(atom: Chem.Atom) -> int:
     return atom.GetAtomicNum()
 
 
+def get_coordinates(mol: Chem.Mol):
+    """
+    Get atom coordinates from an RDKit molecule
+    
+    Args:
+        mol: RDKit molecule
+    
+    Returns:
+        coordinates: Numpy array of atom 3D coordinates (num_atoms, 3)
+    """
+    # Get conformer
+    conf = mol.GetConformer()
+    
+    # Extract coordinates
+    num_atoms = mol.GetNumAtoms()
+    coordinates = np.zeros((num_atoms, 3))
+    
+    for i in range(num_atoms):
+        pos = conf.GetAtomPosition(i)
+        coordinates[i] = [pos.x, pos.y, pos.z]
+    
+    return coordinates
+
+
+def get_atom_types(mol: Chem.Mol):
+    """
+    Get atom types from an RDKit molecule
+    
+    Args:
+        mol: RDKit molecule
+    
+    Returns:
+        atom_types: Numpy array of atom types (num_atoms,)
+    """
+    num_atoms = mol.GetNumAtoms()
+    atom_types = np.zeros(num_atoms, dtype=int)
+    
+    for i in range(num_atoms):
+        atom_types[i] = get_atom_features(mol.GetAtomWithIdx(i))
+    
+    return atom_types
+
+
 def embed_molecule(mol: Chem.Mol, add_H: bool = True):
     """
     Embed an RDKit molecule (if necessary) and extract atom coordinates and bond types
@@ -88,7 +131,10 @@ def embed_molecule(mol: Chem.Mol, add_H: bool = True):
         bond_matrix[i, j] = bond_idx
         bond_matrix[j, i] = bond_idx
     
-    return coordinates, atom_types, bond_matrix
+    # Get charges
+    charges = np.array([atom.GetFormalCharge() for atom in mol.GetAtoms()])
+
+    return coordinates, atom_types, bond_matrix, charges
 
 
 def embed_molecule_for_torch(mol: Chem.Mol, add_H: bool = True):
@@ -104,11 +150,12 @@ def embed_molecule_for_torch(mol: Chem.Mol, add_H: bool = True):
         atom_types: Torch tensor of atom types (batch_size, num_atoms)
         bond_matrix: Torch tensor of bond types (batch_size, num_atoms, num_atoms)
     """
-    coordinates, atom_types, bond_matrix = embed_molecule(mol, add_H=add_H)
+    coordinates, atom_types, bond_matrix, charges = embed_molecule(mol, add_H=add_H)
     
     # Convert to torch tensors with batch dimension
     coordinates = torch.tensor(coordinates, dtype=torch.float32)
     atom_types = torch.tensor(atom_types, dtype=torch.long)
     bond_matrix = torch.tensor(bond_matrix, dtype=torch.long)
+    charges = torch.tensor(charges, dtype=torch.float32)
     
-    return coordinates, atom_types, bond_matrix
+    return coordinates, atom_types, bond_matrix, charges
